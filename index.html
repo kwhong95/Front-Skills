@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>함수형 프로그래밍 연습하기</title>
+</head>
+<body>
+  <h1> 콘솔 연습장 </h1>
+  <script>
+    let users = [
+      { id: 1, name: 'ID', age: 36 },
+      { id: 2, name: 'BJ', age: 32 },
+      { id: 3, name: 'JM', age: 31 },
+      { id: 4, name: 'MG', age: 27 },
+      { id: 5, name: 'LE', age: 25 },
+      { id: 6, name: 'KS', age: 26 },
+      { id: 7, name: 'OE', age: 31 },
+      { id: 8, name: 'PQ', age: 23 }
+    ];
+    // 5. _filter, _map 으로 리팩토링
+    // 6. _each 로 간결화
+
+    function _each (list, iter) {
+      for(let i = 0; i < list.length; i++) {
+        iter(list[i])
+      } 
+      return list;
+    }
+
+    function _filter (list, filter) {
+      let newList = [];w
+      _each(list, val => { if(filter(val)) newList.push(val) });
+      return newList;
+    }
+    
+    function _map (list, mapper) {
+      let newList = [];
+      _each(list, val => { if(mapper(val)) newList.push(val) });
+      return newList;
+    }
+
+    
+    const over30 = _filter(users, user => { return user.age >= 30 });
+
+    console.log(
+      _map(over30, user => { return user.name })
+    );
+    
+    const down30 = _filter(users, user => { return user.age < 30 });
+
+    console.log(
+      _map(down30, user => { return user.age })
+    );
+
+    function _curry(fn) {
+      return function (a, b) {
+        return arguments.length == 2 ? fn(a, b) : function(b) { return fn(a, b); };
+      }
+    }
+
+    function _curryR(fn) {
+      return function (a, b) {
+        return arguments.length == 2 ? fn(a, b) : function(b) { return fn(b, a); };
+      }
+    }
+
+    function _get(obj, key) {
+      return obj == null ? undefined : obj[key];
+    }
+    
+    let slice = Array.prototype.slice;
+    function _rest(list, num) {
+      return slice.call(list, num || 1);
+    }
+
+
+    function _reduce(list, iter, memo) {
+      if(arguments.length == 2) {
+        memo = list[0];
+        list = _rest(list)
+      }
+      _each(list, function(val) {
+        memo = iter(memo, val);
+      });
+      return memo;
+    }
+
+    function add(a, b) {
+      return a + b;
+    }
+
+    console.log( _reduce([1, 2, 3], add));
+    console.log( _reduce([1, 2, 3, 4], add));
+
+    function _pipe() {
+      let fns = arguments;
+      return function(arg) {
+        return _reduce(fns, function(arg, fn) {
+          return fn(arg);
+        }, arg)
+      }
+    }
+
+    function _go(arg) {
+      let fns = _rest(arguments);
+      return _pipe.apply(null, fns)(arg);
+    }
+
+    let f1 = _pipe (
+      function(a) { return a + 1 },
+      function(a) { return a * 2 }
+    );
+
+    console.log(f1(1));
+
+    _go(1,
+      function(a) { return a + 1 },
+      function(a) { return a * 2 },
+      function(a) { return a * a },
+    console.log);
+
+    _go(users,
+      function(users) {
+        return _filter(users, user => {return user.age >= 30});
+      },
+      function(users) {
+        return _map(users, _get('name'));
+      }
+    )
+  
+  </script>
+</body>
+</html>
