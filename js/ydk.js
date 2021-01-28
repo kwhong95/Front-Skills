@@ -90,3 +90,12 @@ function Classroom ( teacher ) {
 // Classroom EC Out! && Global EC In!
 
 var commit = Class("Kyle") ;
+
+// Practice! Practice! Practice!
+
+// 비교 연습\
+
+
+const dayStart = "07:30";
+const dayEnd = "17:45";
+
